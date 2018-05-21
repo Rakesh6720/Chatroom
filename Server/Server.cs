@@ -12,30 +12,56 @@ namespace Server
 {
     class Server
     {
-        public static Client client;
+        Client client1;
+        Client client2;
+        Client client3;
+        List<Client> clients = new List<Client>();        
+
+        
         TcpListener server;
         public Server()
         {
-            server = new TcpListener(IPAddress.Parse("127.0.0.1"), 9999);
+            server = new TcpListener(IPAddress.Parse("192.168.0.127"), 8888);
             server.Start();
         }
         public void Run()
         {
+            clients.Add(client1); //this was changed from zip
+            clients.Add(client2);//this was changed from zip
+            clients.Add(client3);//this was changed from zip
             AcceptClient();
-            string message = client.Recieve();
-            Respond(message);
+            string message1 = clients[0].Recieve();//this was changed from zip
+
+
+            Respond(message1, clients[0]);//this was changed from zip
+            Queue<string> queue = new Queue<string>();
+            string message = queue.First();
+             string message2 = clients[1].Recieve();//this was changed from zip
+
+
+            string message3 = clients[2].Recieve();//this was changed from zip
+
+
+
         }
         private void AcceptClient()
         {
-            TcpClient clientSocket = default(TcpClient);
-            clientSocket = server.AcceptTcpClient();
-            Console.WriteLine("Connected");
-            NetworkStream stream = clientSocket.GetStream();
-            client = new Client(stream, clientSocket);
-        }
-        private void Respond(string body)
+            for (int i = 0; i < clients.Count; i++)//this was changed from zip just put in loop
+            {
+                TcpClient clientSocket = default(TcpClient);
+                clientSocket = server.AcceptTcpClient();
+                Console.WriteLine($"Connected Client {i}"); //this was changed from zip changed from just connected
+                NetworkStream stream = clientSocket.GetStream();
+                clients[i] = new Client(stream, clientSocket); //this was changed from zip changed client to clients list
+            }
+
+            }
+       
+        private void Respond(string body, Client client) //this was changed from zip added parameter
+
         {
              client.Send(body);
         }
+        
     }
 }
